@@ -20,4 +20,9 @@ updated. Petilil simply prevents registration of recycling recipes for any machi
 Cauldrons (GTCEu)
 ~~~~~~~~~~~~~~~~~
 
-Disables cauldron washing for ores.
+Disables cauldron washing for ores. This also removes their tooltips.
+
+Tooltips (GTCEu)
+~~~~~~~~~~~~~~~~
+
+Removes most of the unfunny machine tooltips. Millenialism begone.
