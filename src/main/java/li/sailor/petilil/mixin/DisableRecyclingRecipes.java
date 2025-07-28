@@ -10,10 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -28,33 +26,24 @@ abstract class DisableRecyclingRecipes {
     private DisableRecyclingRecipes() {
     }
 
-    @Shadow(remap = false)
-    public static void registerRecyclingRecipes(Consumer<FinishedRecipe> provider, ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting, @Nullable TagPrefix prefix) {
-        throw new Error("unreachable");
-    }
-
     @Inject(method = "init", at = @At("HEAD"), cancellable = true, remap = false)
     private static void pt$disableRecycling(Consumer<FinishedRecipe> provider, CallbackInfo ci) {
         LogManager.getLogger().info("Petilil: Nuking recycling recipes!");
         // ci.cancel();
     }
 
-    @Redirect(
-            method = "init",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lcom/gregtechceu/gtceu/data/recipe/misc/RecyclingRecipes;registerRecyclingRecipes(Ljava/util/function/Consumer;Lnet/minecraft/world/item/ItemStack;Ljava/util/List;ZLcom/gregtechceu/gtceu/api/data/tag/TagPrefix;)V"
-            ),
-            remap = false
-    )
-    private static void pt$checkItems(Consumer<FinishedRecipe> provider, ItemStack stack, List<MaterialStack> components, boolean ignoreArcSmelting, @Nullable TagPrefix prefix) {
-        var item = stack.getItem();
+    @Inject(method = "registerRecyclingRecipes", at = @At("HEAD"), cancellable = true, remap = false)
+    private static void pt$dontRegisterRecycling(Consumer<FinishedRecipe> provider, ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting, @Nullable TagPrefix prefix, CallbackInfo ci) {
+        var item = input.getItem();
         if (item instanceof BlockItem i) {
             var block = i.getBlock();
             if (block instanceof MetaMachineBlock) {
-                return;
+                ci.cancel();
             }
         }
-        registerRecyclingRecipes(provider, stack, components, ignoreArcSmelting, prefix);
+        var descId = input.getDescriptionId();
+        if (descId.endsWith("extruder_mold") || descId.endsWith("casting_mold")) {
+            ci.cancel();
+        }
     }
 }
