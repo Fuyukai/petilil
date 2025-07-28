@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MPL-2.0"
+
+[[mods]]
+modId = "petilil"
+version = "25.0.0"
+displayName = "Petilil"
+authors = "Lura Skye"
+description = '''
+To me-- Tyrfing S!
+'''
+#logoFile = ""
+
+[[dependencies.petilil]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.petilil]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
